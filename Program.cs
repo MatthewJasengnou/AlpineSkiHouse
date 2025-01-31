@@ -5,44 +5,51 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Service configuration
 builder.Services.AddRazorPages();
-builder.Services.AddEndpointsApiExplorer(); // Needed for Swagger
-builder.Services.AddSwaggerGen(); // Adding Swagger generation
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
+    { 
+        Title = "AlpineSkiHouse API", 
+        Version = "v1",
+        Description = "API documentation for Alpine Ski House"
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline configuration
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
-// Retrieve the EnableSwagger flag from configuration or environment variable
-bool enableSwagger = builder.Configuration.GetValue<bool>("EnableSwagger");
-
-// Apply Swagger middleware based on the EnableSwagger flag or if in development environment
-if (app.Environment.IsDevelopment() || enableSwagger)
+// Swagger configuration
+bool enableSwagger = builder.Configuration.GetValue<bool>("EnableSwagger") || app.Environment.IsDevelopment();
+if (enableSwagger)
 {
-    
-app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AlpineSkiHouse v1"));
-
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "AlpineSkiHouse API v1");
+        c.RoutePrefix = "swagger";
+    });
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapRazorPages();
 
-// Minimal API endpoint
-app.MapGet("/hello", () => "Hello, AlpineSkiHouse!");
+// API endpoints
+app.MapGet("/hello", () => "Hello, AlpineSkiHouse!")
+   .WithOpenApi();
 
-// Get the port from the environment variable (Render provides this automatically)
+// Port configuration
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Run($"http://0.0.0.0:{port}");

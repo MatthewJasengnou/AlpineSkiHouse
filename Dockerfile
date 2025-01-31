@@ -1,26 +1,23 @@
-# Use the official .NET SDK as the build environment
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Copy only project files first (to cache restore layer)
+# Copy and restore dependencies
 COPY *.csproj ./
 RUN dotnet restore
 
-# Copy the rest of the application source code
+# Copy everything else and build
 COPY . ./
-
-# Build the application
 RUN dotnet publish -c Release -o out
 
-# Use the official ASP.NET Core runtime as the final container image
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-
-# Copy the published output from the build stage
 COPY --from=build-env /app/out .
 
-# Expose the application port (Render will map this automatically)
-EXPOSE 5000
+# Environment configuration
+ENV ASPNETCORE_URLS=http://+:5000
+ENV EnableSwagger=true
 
-# Ensure app listens on the correct port using Render's PORT environment variable
+EXPOSE 5000
 CMD ["dotnet", "AlpineSkiHouse.dll"]
