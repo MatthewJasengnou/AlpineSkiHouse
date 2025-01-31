@@ -4,7 +4,30 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Alpine Ski House is the premier ski hill in the Northeast!</p>
+<div class="container">
+    <div class="row min-vh-100 align-items-center">
+        <!-- Welcome Content (Left Side) -->
+        <div class="col-md-6 text-center">
+            <h1 class="display-4">Welcome</h1>
+            <p>Alpine Ski House is the premier ski hill in the Northeast!</p>
+        </div>
+
+        <!-- Login Form (Right Side) -->
+        <div class="col-md-6">
+            <div class="card mx-auto" style="max-width: 300px;">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Login</h3>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Enter email">
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
