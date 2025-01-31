@@ -18,7 +18,12 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
-else
+
+// Retrieve the EnableSwagger flag from configuration or environment variable
+bool enableSwagger = builder.Configuration.GetValue<bool>("EnableSwagger");
+
+// Apply Swagger middleware based on the EnableSwagger flag or if in development environment
+if (app.Environment.IsDevelopment() || enableSwagger)
 {
     app.UseSwagger();
     app.UseSwaggerUI();
