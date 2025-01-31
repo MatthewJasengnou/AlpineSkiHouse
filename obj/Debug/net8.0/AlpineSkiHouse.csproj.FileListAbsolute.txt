@@ -29,3 +29,15 @@
 /Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/obj/Debug/net8.0/AlpineSkiHouse.pdb
 /Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/obj/Debug/net8.0/AlpineSkiHouse.genruntimeconfig.cache
 /Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/obj/Debug/net8.0/ref/AlpineSkiHouse.dll
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/out/web.config
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/out/AlpineSkiHouse.deps.json
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/out/AlpineSkiHouse.runtimeconfig.json
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/out/appsettings.Development.json
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/out/appsettings.json
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/Microsoft.OpenApi.dll
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/Swashbuckle.AspNetCore.Swagger.dll
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/obj/Debug/net8.0/AlpineSkiHouse.csproj.AssemblyReference.cache
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/obj/Debug/net8.0/AlpineSkiHouse.MvcApplicationPartsAssemblyInfo.cs
+/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/obj/Debug/net8.0/AlpineSk.F0F00818.Up2Date
