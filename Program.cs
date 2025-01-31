@@ -25,12 +25,10 @@ bool enableSwagger = builder.Configuration.GetValue<bool>("EnableSwagger");
 // Apply Swagger middleware based on the EnableSwagger flag or if in development environment
 if (app.Environment.IsDevelopment() || enableSwagger)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "AlpineSkiHouse API V1");
-        c.RoutePrefix = "swagger";  // Ensure this is set to 'swagger' or adjust accordingly
-    });
+    
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AlpineSkiHouse v1"));
+
 }
 
 app.UseHttpsRedirection();
