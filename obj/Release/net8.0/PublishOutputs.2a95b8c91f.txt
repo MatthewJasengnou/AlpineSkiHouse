@@ -1,7 +1,0 @@
-/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/out/AlpineSkiHouse
-/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/out/appsettings.Development.json
-/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/out/appsettings.json
-/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/out/AlpineSkiHouse.dll
-/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/out/AlpineSkiHouse.deps.json
-/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/out/AlpineSkiHouse.runtimeconfig.json
-/Users/matthewjasengnou/MyApiProjects/AlpineSkiHouse/out/AlpineSkiHouse.pdb
