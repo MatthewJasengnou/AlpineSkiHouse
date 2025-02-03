@@ -1,33 +1,64 @@
-﻿@page
-@model IndexModel
-@{
-    ViewData["Title"] = "Home page";
+﻿@section Scripts {
+    <script>
+        // Get activities from server
+        async function loadActivities() {
+            const response = await fetch('/api/activities');
+            const activities = await response.json();
+            const container = document.getElementById('activities-container');
+            const template = document.getElementById('activity-template');
+
+            container.innerHTML = '';
+            
+            activities.forEach(activity => {
+                const clone = template.content.cloneNode(true);
+                const card = clone.querySelector('.card');
+                card.dataset.activityId = activity.id;
+                
+                clone.querySelector('.card-title').textContent = activity.name;
+                clone.querySelector('.card-text').textContent = activity.description;
+                clone.querySelector('.like-btn .count').textContent = activity.likes;
+                clone.querySelector('.dislike-btn .count').textContent = activity.dislikes;
+
+                container.appendChild(clone);
+            });
+        }
+
+        // Handle voting
+        async function handleVote(button, isLike) {
+            const card = button.closest('.card');
+            const activityId = parseInt(card.dataset.activityId);
+            
+            try {
+                const response = await fetch(`/api/activities/${activityId}/vote`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ isLike })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error);
+                }
+                
+                const updatedActivity = await response.json();
+                card.querySelector('.like-btn .count').textContent = updatedActivity.likes;
+                card.querySelector('.dislike-btn .count').textContent = updatedActivity.dislikes;
+                card.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // Event listener
+        document.addEventListener('DOMContentLoaded', loadActivities);
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.like-btn, .dislike-btn')) {
+                const button = e.target.closest('button');
+                const isLike = button.classList.contains('like-btn');
+                handleVote(button, isLike);
+            }
+        });
+    </script>
 }
-
-<div class="container">
-    <div class="row min-vh-100 align-items-center">
-        <!-- Welcome Content (Left Side) -->
-        <div class="col-md-6 text-center">
-            <h1 class="display-4">Welcome</h1>
-            <p>Alpine Ski House is the premier ski hill in the Northeast!</p>
-        </div>
-
-        <!-- Login Form (Right Side) -->
-        <div class="col-md-6">
-            <div class="card mx-auto" style="max-width: 300px;">
-                <div class="card-body">
-                    <h3 class="card-title mb-4">Login</h3>
-                    <form>
-                        <div class="mb-3">
-                            <input type="email" class="form-control" placeholder="Enter email">
-                        </div>
-                        <div class="mb-3">
-                            <input type="password" class="form-control" placeholder="Password">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Sign in</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
