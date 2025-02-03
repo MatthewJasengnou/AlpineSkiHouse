@@ -1,64 +1,85 @@
-﻿@section Scripts {
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Activity Voting Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Alpine Ski House!</h1>
+    <p>Engage with our activities and let us know what you think!</p>
+</div>
+
+<div class="container" id="activities-container">
+    <!-- Activities will be loaded here dynamically -->
+</div>
+
+<template id="activity-template">
+    <div class="card my-3">
+        <div class="card-body">
+            <h5 class="card-title"></h5>
+            <p class="card-text"></p>
+            <div class="btn-group">
+                <button class="btn btn-success like-btn">Like <span class="count"></span></button>
+                <button class="btn btn-danger dislike-btn">Dislike <span class="count"></span></button>
+            </div>
+        </div>
+    </div>
+</template>
+
+@section Scripts {
     <script>
-        // Get activities from server
+        // Load activities from the server
         async function loadActivities() {
-            const response = await fetch('/api/activities');
-            const activities = await response.json();
-            const container = document.getElementById('activities-container');
-            const template = document.getElementById('activity-template');
+            try {
+                const response = await fetch('/api/activities');
+                if (!response.ok) throw new Error('Failed to fetch activities');
+                const activities = await response.json();
+                const container = document.getElementById('activities-container');
+                const template = document.getElementById('activity-template').content;
 
-            container.innerHTML = '';
-            
-            activities.forEach(activity => {
-                const clone = template.content.cloneNode(true);
-                const card = clone.querySelector('.card');
-                card.dataset.activityId = activity.id;
-                
-                clone.querySelector('.card-title').textContent = activity.name;
-                clone.querySelector('.card-text').textContent = activity.description;
-                clone.querySelector('.like-btn .count').textContent = activity.likes;
-                clone.querySelector('.dislike-btn .count').textContent = activity.dislikes;
+                container.innerHTML = ''; // Clear previous contents
 
-                container.appendChild(clone);
-            });
+                activities.forEach(activity => {
+                    const clone = template.cloneNode(true);
+                    clone.querySelector('.card-title').textContent = activity.name;
+                    clone.querySelector('.card-text').textContent = activity.description;
+                    clone.querySelector('.like-btn .count').textContent = activity.likes;
+                    clone.querySelector('.dislike-btn .count').textContent = activity.dislikes;
+                    clone.querySelector('.like-btn').addEventListener('click', () => handleVote(activity.id, true));
+                    clone.querySelector('.dislike-btn').addEventListener('click', () => handleVote(activity.id, false));
+                    container.appendChild(clone);
+                });
+            } catch (error) {
+                console.error('Error loading activities:', error);
+                alert('Error loading activities. Please try again later.');
+            }
         }
 
         // Handle voting
-        async function handleVote(button, isLike) {
-            const card = button.closest('.card');
-            const activityId = parseInt(card.dataset.activityId);
-            
+        async function handleVote(activityId, isLike) {
             try {
                 const response = await fetch(`/api/activities/${activityId}/vote`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ isLike })
                 });
-                
-                if (!response.ok) {
-                    const error = await response.text();
-                    throw new Error(error);
-                }
-                
+
+                if (!response.ok) throw new Error('Failed to submit vote');
+
                 const updatedActivity = await response.json();
-                card.querySelector('.like-btn .count').textContent = updatedActivity.likes;
-                card.querySelector('.dislike-btn .count').textContent = updatedActivity.dislikes;
-                card.querySelectorAll('button').forEach(btn => btn.disabled = true);
+                const activityCard = document.querySelector(`.card[data-id="${activityId}"]`);
+                activityCard.querySelector('.like-btn .count').textContent = updatedActivity.likes;
+                activityCard.querySelector('.dislike-btn .count').textContent = updatedActivity.dislikes;
+
+                // Optionally disable buttons after voting
+                activityCard.querySelectorAll('button').forEach(btn => btn.disabled = true);
             } catch (error) {
-                alert(error.message);
+                console.error('Error handling vote:', error);
+                alert('Error submitting vote. Please try again later.');
             }
         }
 
-        // Event listener
+        // Initialize activities on DOM content loaded
         document.addEventListener('DOMContentLoaded', loadActivities);
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.like-btn, .dislike-btn')) {
-                const button = e.target.closest('button');
-                const isLike = button.classList.contains('like-btn');
-                handleVote(button, isLike);
-            }
-        });
     </script>
 }

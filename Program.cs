@@ -8,11 +8,11 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add these new services
+// Add services for Razor pages and CORS
 builder.Services.AddRazorPages();
 builder.Services.AddCors();
 
-// Existing service configuration
+// Configure Swagger to generate API documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// New in-memory storage for activities and votes
+// In-memory storage for activities and votes
 var activities = new List<Activity>
 {
     new Activity(1, "Night Skiing", "Experience the slopes under the stars with our illuminated trails"),
@@ -36,7 +36,7 @@ var activities = new List<Activity>
 
 var votes = new Dictionary<string, Dictionary<int, bool>>();
 
-// New API endpoints for activities
+// API endpoints for activities
 app.MapGet("/api/activities", () => activities);
 app.MapPost("/api/activities/{id}/vote", (int id, bool isLike, HttpRequest request) =>
 {
@@ -49,14 +49,10 @@ app.MapPost("/api/activities/{id}/vote", (int id, bool isLike, HttpRequest reque
     if (votes[userId].ContainsKey(id)) return Results.BadRequest("Already voted");
     
     votes[userId][id] = isLike;
-    if (isLike) activity.Likes++;
-    else activity.Dislikes++;
+    activity.UpdateVotes(isLike); // Use a method to update votes to encapsulate this behavior.
     
     return Results.Ok(activity);
 });
-
-// Existing items code remains unchanged
-var items = new List<Item>();
 
 // Configure CORS
 app.UseCors(policy => policy
@@ -64,7 +60,7 @@ app.UseCors(policy => policy
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-// Existing pipeline configuration
+// Application configuration
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -80,18 +76,24 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapGet("/hello", () => "Hello, AlpineSkiHouse!").WithOpenApi();
 
-// Existing CRUD endpoints remain unchanged
-// [Keep all existing item endpoints here]
-
-// Port configuration remains unchanged
+// Configuration for HTTP server
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Run($"http://0.0.0.0:{port}");
 
-// New records
+// Record for activities
 public record Activity(int Id, string Name, string Description)
 {
-    public int Likes { get; set; }
-    public int Dislikes { get; set; }
+    public int Likes { get; set; } = 0;
+    public int Dislikes { get; set; } = 0;
+
+    // Method to update likes or dislikes
+    public void UpdateVotes(bool isLike)
+    {
+        if (isLike)
+            Likes++;
+        else
+            Dislikes++;
+    }
 }
 
 public class Item  // Existing class remains unchanged
