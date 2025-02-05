@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Copy csproj and restore as distinct layers
+# Copy and restore dependencies
 COPY *.csproj ./
 RUN dotnet restore
 
@@ -14,4 +14,11 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "AlpineSkiHouse.dll"]
+
+# Environment configuration
+ENV ASPNETCORE_URLS=http://+:5000
+ENV EnableSwagger=true
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+EXPOSE 5000
+CMD ["dotnet", "AlpineSkiHouse.dll"]
