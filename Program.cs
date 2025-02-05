@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.OpenApi.Models; // Ensures that OpenApiInfo is recognized
 using AlpineSkiHouse;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +24,8 @@ builder.Services.AddSwaggerGen(c =>
 
 // Add DbContext configuration
 builder.Services.AddDbContext<AlpineSkiHouseDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql($"Host={Environment.GetEnvironmentVariable("DB_HOST")};Database={Environment.GetEnvironmentVariable("DB_NAME")};Username={Environment.GetEnvironmentVariable("DB_USER")};Password={Environment.GetEnvironmentVariable("DB_PASS")}"));
+
 
 var app = builder.Build();
 
@@ -36,9 +35,15 @@ app.UseCors(policy => policy
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseDeveloperExceptionPage(); // Use developer exception page in development
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AlpineSkiHouse API v1"));
+}
+else
+{
+    app.UseExceptionHandler("/Error"); // Use custom error handler in production
     app.UseHsts();
 }
 
