@@ -20,5 +20,5 @@ ENV ASPNETCORE_URLS=http://+:5000
 ENV EnableSwagger=true
 ENV ASPNETCORE_ENVIRONMENT=Production
 
-EXPOSE 5000 7024
+EXPOSE 5000
 CMD ["dotnet", "AlpineSkiHouse.dll"]
