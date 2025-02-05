@@ -1,24 +1,24 @@
-# Build stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
-WORKDIR /app
-
-# Copy and restore dependencies
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
-
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build-env /app/out .
-
-# Environment configuration
-ENV ASPNETCORE_URLS=http://+:5000
-ENV EnableSwagger=true
-ENV ASPNETCORE_ENVIRONMENT=Production
-
-EXPOSE 5000
-CMD ["dotnet", "AlpineSkiHouse.dll"]
+# Use the official ASP.NET Core runtime image from Microsoft:
+    FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+    WORKDIR /app
+    EXPOSE 80
+    EXPOSE 443
+    
+    # Use the SDK image to build the application:
+    FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+    WORKDIR /src
+    COPY ["AlpineSkiHouse.csproj", "./"]
+    RUN dotnet restore "AlpineSkiHouse.csproj"
+    COPY . .
+    WORKDIR "/src/."
+    RUN dotnet build "AlpineSkiHouse.csproj" -c Release -o /app/build
+    
+    FROM build AS publish
+    RUN dotnet publish "AlpineSkiHouse.csproj" -c Release -o /app/publish
+    
+    # Copy the published application to the official ASP.NET Core runtime image:
+    FROM base AS final
+    WORKDIR /app
+    COPY --from=publish /app/publish .
+    ENTRYPOINT ["dotnet", "AlpineSkiHouse.dll"]
+    
