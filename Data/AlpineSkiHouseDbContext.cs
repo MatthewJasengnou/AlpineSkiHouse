@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-
-
+using AlpineSkiHouse.Models;
 
 namespace AlpineSkiHouse
 {

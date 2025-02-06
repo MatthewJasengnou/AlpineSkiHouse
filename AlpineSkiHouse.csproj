@@ -24,6 +24,7 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI.Core" Version="6.0.2" />
 
     <!-- Model and DbContext Classes -->
+    <Compile Include="Models/*.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Data/*.cs" />
     <Compile Include="Pages/*.cs" />

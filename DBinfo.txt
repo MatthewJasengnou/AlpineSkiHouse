@@ -1,0 +1,4 @@
+export DB_HOST=post
+export DB_NAME=alpineskihouse
+export DB_USER=matthew
+export DB_PASS=Th3futureme

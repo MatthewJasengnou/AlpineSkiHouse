@@ -24,8 +24,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Add DbContext configuration
 builder.Services.AddDbContext<AlpineSkiHouseDbContext>(options =>
-    options.UseNpgsql($"Host={Environment.GetEnvironmentVariable("DB_HOST")};Database={Environment.GetEnvironmentVariable("DB_NAME")};Username={Environment.GetEnvironmentVariable("DB_USER")};Password={Environment.GetEnvironmentVariable("DB_PASS")}"));
-
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
@@ -53,7 +52,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
-app.MapGet("/hello", () => "Hello, AlpineSkiHouse!");
+app.MapGet("/hello", () => "Hello, AlpineSkiHouse!").WithOpenApi();
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 app.Run($"http://0.0.0.0:{port}");
