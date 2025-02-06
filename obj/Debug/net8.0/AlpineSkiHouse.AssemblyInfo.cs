@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AlpineSkiHouse")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2ae83581215ae322a2b3262e9cfd919ad277283e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5663ebd7435d0e729608bc087042f64487cc9a33")]
 [assembly: System.Reflection.AssemblyProductAttribute("AlpineSkiHouse")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AlpineSkiHouse")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
