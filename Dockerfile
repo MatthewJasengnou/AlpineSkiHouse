@@ -4,11 +4,11 @@ WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 COPY *.csproj ./
-RUN dotnet restore
+RUN dotnet restore --verbosity detailed
 
 # Copy everything else and build
 COPY . ./
-RUN dotnet publish -c Release -o out --no-restore
+RUN dotnet publish -c Release -o out --no-restore --verbosity detailed
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
