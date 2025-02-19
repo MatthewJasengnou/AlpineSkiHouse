@@ -10,6 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddCors();
 
+// Configure antiforgery settings, particularly for AJAX calls
+builder.Services.AddAntiforgery(options => {
+    options.HeaderName = "X-CSRF-TOKEN";  // Custom header name for AJAX requests
+    options.Cookie.Name = "XSRF-TOKEN";   // Set a custom cookie name
+    options.Cookie.HttpOnly = false;      // Ensure JavaScript can read the cookie
+});
+
 // Configure Swagger to generate API documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -50,9 +57,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+app.UseCookiePolicy(); // Ensures cookies are handled securely
 
 app.MapRazorPages();
 app.MapGet("/hello", () => "Hello, AlpineSkiHouse!").WithOpenApi();
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5001";
 app.Run($"http://0.0.0.0:{port}");

@@ -1,7 +1,9 @@
 ﻿@page
 @model IndexModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @{
     ViewData["Title"] = "Activity Voting Page";
+    var antiforgeryToken = Xsrf.GetAndStoreTokens(HttpContext).RequestToken;
 }
 
 <div class="text-center">
@@ -10,6 +12,8 @@
 </div>
 
 <div class="container" id="activities-container">
+    <!-- Include CSRF Token for client-side JavaScript use -->
+    <input type="hidden" id="csrf-token" value="@antiforgeryToken">
     <!-- Activities will be loaded here dynamically -->
 </div>
 

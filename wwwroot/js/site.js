@@ -1,14 +1,15 @@
 ﻿document.addEventListener('DOMContentLoaded', loadActivities);
 
-// Load activities from the server
 async function loadActivities() {
     try {
+        console.log("Fetching activities..."); // Debugging log
         const response = await fetch('/Index?handler=Activities');
-        if (!response.ok) throw new Error('Failed to fetch activities');
+        if (!response.ok) throw new Error(`Failed to fetch activities: ${response.statusText}`);
         const activities = await response.json();
+        console.log("Activities received:", activities); // Debugging log
+
         const container = document.getElementById('activities-container');
         const template = document.getElementById('activity-template').content;
-
         container.innerHTML = ''; // Clear previous contents
 
         activities.forEach(activity => {
@@ -28,18 +29,29 @@ async function loadActivities() {
     }
 }
 
-// Handle voting
 async function handleVote(activityId, isLike) {
     try {
+        console.log(`Submitting vote: ActivityID=${activityId}, isLike=${isLike}`); // Debugging log
+        const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]'); // Correctly selecting the CSRF token
+        const headers = { 'Content-Type': 'application/json' };
+
+        if (tokenElement && tokenElement.value) {
+            headers['RequestVerificationToken'] = tokenElement.value;
+        } else {
+            console.error('CSRF token not found.');
+            alert('Session might have expired or the page has an error. Please refresh and try again.');
+            return;
+        }
+
         const response = await fetch(`/Index?handler=Vote&activityId=${activityId}&isLike=${isLike}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 
-                       'RequestVerificationToken': document.getElementsByName('__RequestVerificationToken')[0].value },
+            headers: headers,
+            body: JSON.stringify({ activityId, isLike })
         });
 
         if (!response.ok) throw new Error('Failed to submit vote');
-
         const updatedActivity = await response.json();
+
         const activityCard = document.querySelector(`.card[data-id="${activityId}"]`);
         activityCard.querySelector('.like-btn .count').textContent = updatedActivity.likes;
         activityCard.querySelector('.dislike-btn .count').textContent = updatedActivity.dislikes;

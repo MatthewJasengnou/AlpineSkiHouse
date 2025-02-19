@@ -13,7 +13,7 @@ namespace AlpineSkiHouse.Pages;
 public class IndexModel : PageModel
 {
     private readonly ILogger<IndexModel> _logger;
-    private readonly AlpineSkiHouseDbContext _context; 
+    private readonly AlpineSkiHouseDbContext _context;
 
     public List<Activity> Activities { get; private set; } = new List<Activity>();
 
@@ -28,29 +28,36 @@ public class IndexModel : PageModel
         Activities = await _context.Activities.ToListAsync();
     }
 
-    public async Task<IActionResult> OnPostLikeAsync(int id)
+    public async Task<IActionResult> OnPostVoteAsync(int id, bool isLike)
     {
         var activity = await _context.Activities.FindAsync(id);
         if (activity == null)
         {
-            return NotFound();
+            return NotFound(new { message = "Activity not found." });
         }
 
-        activity.Likes++;
+        if (isLike)
+            activity.Likes++;
+        else
+            activity.Dislikes++;
+
         await _context.SaveChangesAsync();
-        return new JsonResult(new { likes = activity.Likes, dislikes = activity.Dislikes });
+        return new JsonResult(new { id = activity.Id, likes = activity.Likes, dislikes = activity.Dislikes });
     }
 
-    public async Task<IActionResult> OnPostDislikeAsync(int id)
+    public async Task<IActionResult> OnGetActivitiesAsync()
     {
-        var activity = await _context.Activities.FindAsync(id);
-        if (activity == null)
-        {
-            return NotFound();
-        }
+        var activities = await _context.Activities
+            .Select(a => new
+            {
+                id = a.Id,
+                name = a.Name,
+                description = a.Description,
+                likes = a.Likes,
+                dislikes = a.Dislikes
+            })
+            .ToListAsync();
 
-        activity.Dislikes++;
-        await _context.SaveChangesAsync();
-        return new JsonResult(new { likes = activity.Likes, dislikes = activity.Dislikes });
+        return new JsonResult(activities);
     }
 }
